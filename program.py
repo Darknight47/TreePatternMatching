@@ -20,13 +20,57 @@ def print_tree(node, level=0):
     if node.rightChildElement is not None:
         print_tree(node.rightChildElement, level + 1)
 
+def readingFromFile(lineTemp):
+    lineTemp = file.readline()
+    lineTemp = lineTemp.strip()
+    lineTemp = lineTemp.replace(" ", "")
+    tempArr = re.split(r'[(), ]+', lineTemp)
+    return tempArr
+
+def mother_father_tree(lineTemp, tempArr):
+    treeRoot = Node(tempArr[0])
+    leftChild = Node(tempArr[1], parent=treeRoot)
+    rightChild = Node(tempArr[2], parent=treeRoot)
+    treeRoot.addLeftChild(leftChild)
+    treeRoot.addRightChild(rightChild)
+    nodes.append(treeRoot)
+    nodes.append(leftChild)
+    nodes.append(rightChild)
+    
+    tempArr = readingFromFile(lineTemp=lineTemp)    
+    tempRoot = Node(tempArr[0], parent=leftChild)
+    leftChild.addLeftChild(tempRoot)
+    leftChild = Node(tempArr[1], parent=tempRoot)
+    rightChild = Node(tempArr[2], parent=tempRoot)
+    tempRoot.addLeftChild(leftChild)
+    tempRoot.addRightChild(rightChild)    
+    nodes.append(tempRoot)
+    nodes.append(leftChild)
+    nodes.append(rightChild)
+   
+    tempArr = readingFromFile(lineTemp=lineTemp)
+    tempRoot = Node(tempArr[0], parent=leftChild)
+    leftChild.addLeftChild(tempRoot)
+    leftChild = Node(tempArr[1], parent=tempRoot)
+    tempRoot.addLeftChild(leftChild)
+    nodes.append(tempRoot)
+    nodes.append(leftChild)        
+    return treeRoot 
+
 
 with open("text.txt") as file:
     while True:
         lineTemp = file.readline()
+        nodes = []
         if(lineTemp == '\n'):
+            if(indx == 0):
+                diction["MotherTree"] = treeRoot
+                indx += 1
             print_tree(treeRoot)
         if not lineTemp: #End of the File.
+            if(indx == 1):
+                diction["FatherTree"] = treeRoot
+                indx += 1
             print_tree(treeRoot)
             break
         lineTemp = lineTemp.strip()
@@ -36,35 +80,6 @@ with open("text.txt") as file:
             tempFact = Fact(tempArr[0], tempArr[1], tempArr[2])
             facts.append(tempFact)
         elif(tempArr[len(tempArr) - 1] == ':-'):
-            nodes = []
-            treeRoot = Node(tempArr[0])
-            leftChild = Node(tempArr[1], parent=treeRoot)
-            rightChild = Node(tempArr[2], parent=treeRoot)
-            treeRoot.addLeftChild(leftChild)
-            treeRoot.addRightChild(rightChild)
-            nodes.append(treeRoot)
-            nodes.append(leftChild)
-            nodes.append(rightChild)
-            while True:
-                lineTemp = file.readline()
-                lineTemp = lineTemp.strip()
-                lineTemp = lineTemp.replace(" ", "")
-                tempArr = re.split(r'[(), ]+', lineTemp)
-                if(tempArr[len(tempArr) - 1] == '.'):
-                    tempRoot = Node(tempArr[0], parent=leftChild)
-                    leftChild.addLeftChild(tempRoot)
-                    leftChild = Node(tempArr[1], parent=tempRoot)
-                    tempRoot.addLeftChild(leftChild)
-                    nodes.append(tempRoot)
-                    nodes.append(leftChild)               
-                    break
-                else:
-                    tempRoot = Node(tempArr[0], parent=leftChild)
-                    leftChild.addLeftChild(tempRoot)
-                    leftChild = Node(tempArr[1], parent=tempRoot)
-                    rightChild = Node(tempArr[2], parent=tempRoot)
-                    tempRoot.addLeftChild(leftChild)
-                    tempRoot.addRightChild(rightChild)    
-                    nodes.append(tempRoot)
-                    nodes.append(leftChild)
-                    nodes.append(rightChild)
+            treeRoot = mother_father_tree(lineTemp=lineTemp, tempArr=tempArr)
+            print(treeRoot)
+print(2)
