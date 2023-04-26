@@ -66,12 +66,12 @@ with open("text.txt") as file:
             if(indx == 0):
                 diction["MotherTree"] = treeRoot
                 indx += 1
-            print_tree(treeRoot)
+            #print_tree(treeRoot)
         if not lineTemp: #End of the File.
             if(indx == 1):
                 diction["FatherTree"] = treeRoot
                 indx += 1
-            print_tree(treeRoot)
+            #print_tree(treeRoot)
             break
         lineTemp = lineTemp.strip()
         lineTemp = lineTemp.replace(" ", "")
@@ -81,5 +81,5 @@ with open("text.txt") as file:
             facts.append(tempFact)
         elif(tempArr[len(tempArr) - 1] == ':-'):
             treeRoot = mother_father_tree(lineTemp=lineTemp, tempArr=tempArr)
-            print(treeRoot)
+            print_tree(treeRoot)
 print(2)
