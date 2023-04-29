@@ -1,9 +1,10 @@
 import re
 from node import Node
 from fact import Fact
+
 diction = {}
 facts = []
-indx = 0
+indx = -1
 
 def print_tree(node, level=0):
     if level == 0:
@@ -103,17 +104,13 @@ with open("text.txt") as file:
         if(lineTemp == '\n'):
             if(indx == 0):
                 diction["MotherTree"] = treeRoot
-                indx += 1
             elif(indx == 1):
                 diction["FatherTree"] = treeRoot
-                indx += 1
             elif(indx == 2):
                 diction["BrotherTree"] = treeRoot
-                indx += 1
         if not lineTemp: #End of the File.
             if(indx == 3):
                 diction["SisterTree"] = treeRoot
-                indx += 1
             break
         lineTemp = lineTemp.strip()
         lineTemp = lineTemp.replace(" ", "")
@@ -122,8 +119,9 @@ with open("text.txt") as file:
             tempFact = Fact(tempArr[0], tempArr[1], tempArr[2])
             facts.append(tempFact)
         elif(tempArr[len(tempArr) - 1] == ':-'):
+            indx += 1
             if(indx == 0):
-                treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr, nephew=True)
+                treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr)
                 print_tree(treeRoot)
             elif(indx == 1):
                 treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr)
