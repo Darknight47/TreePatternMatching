@@ -5,6 +5,11 @@ from fact import Fact
 sourceDiction = {}
 sourceFacts = []
 
+studentDiction = {}
+studentFacts = []
+
+totalScore = 20
+
 def print_tree(node, level=0):
     if level == 0:
         print(node.name)
@@ -154,4 +159,42 @@ for i in facts:
     print(i)
     print("----------")
 """
-print(2)
+with open("student1.txt") as file:
+    while True:
+        lineTemp = file.readline().replace(" ", "")
+        nodes = []
+        if(lineTemp == '\n'):
+            tk = treeRoot.name
+            if(tk not in studentDiction):
+                studentDiction[tk] = treeRoot
+        if not lineTemp: #End of the File.
+            tk = treeRoot.name
+            if(tk not in studentDiction):
+                studentDiction[tk] = treeRoot
+            break
+        lineTemp = lineTemp.strip()
+        lineTemp = lineTemp.replace(" ", "")
+        tempArr = re.split(r'[(), ]+', lineTemp)
+        if(tempArr[len(tempArr) - 1] == '.'):
+            tempFact = Fact(tempArr[0], tempArr[1], tempArr[2])
+            studentFacts.append(tempFact)
+        elif(tempArr[len(tempArr) - 1] == ':-'):
+            tempKey = tempArr[0]
+            if(tempKey == 'mother' or tempKey == 'father'):
+                treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr)
+            elif(tempKey == 'brother' or tempKey == 'sister'):
+                treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr, bs=True)
+            elif(tempKey == 'sibling'):
+                treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr, sib=True)  
+
+for temp in sourceDiction:
+    tmpKey = temp
+    tmpSourceValue = sourceDiction[temp]
+    if(tmpKey in studentDiction):
+        tmpStudentValue = studentDiction[tmpKey]
+        
+        print(tmpKey)
+    else:
+        totalScore -= 4
+
+print("e")
