@@ -1,0 +1,21 @@
+mother(X, Y) :-
+    parent(X, Y),
+    female(X).
+
+father(X, Y) :-
+    parent(X, Y),
+    male(X).
+
+brother(X, Y) :-
+    sibling(X, Y),
+    male(X),
+    X \= Y.
+
+sister(X, Y) :-
+    sibling(X, Y),
+    female(X),
+    X \= Y.
+
+parent(splinter, leonardo).
+parent(splinter, donatello).
+
