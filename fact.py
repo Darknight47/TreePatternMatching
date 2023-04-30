@@ -1,6 +1,6 @@
 class Fact:
     def __init__(self, rel, _x, _y):
-        self.relation = rel,
+        self.relation = rel
         self.x = _x
         self.y = _y
     
