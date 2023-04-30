@@ -2,8 +2,8 @@ import re
 from node import Node
 from fact import Fact
 
-diction = {}
-facts = []
+sourceDiction = {}
+sourceFacts = []
 
 def print_tree(node, level=0):
     if level == 0:
@@ -124,19 +124,19 @@ with open("source.txt") as file:
         nodes = []
         if(lineTemp == '\n'):
             tk = treeRoot.name
-            if(tk not in diction):
-                diction[tk] = treeRoot
+            if(tk not in sourceDiction):
+                sourceDiction[tk] = treeRoot
         if not lineTemp: #End of the File.
             tk = treeRoot.name
-            if(tk not in diction):
-                diction[tk] = treeRoot
+            if(tk not in sourceDiction):
+                sourceDiction[tk] = treeRoot
             break
         lineTemp = lineTemp.strip()
         lineTemp = lineTemp.replace(" ", "")
         tempArr = re.split(r'[(), ]+', lineTemp)
         if(tempArr[len(tempArr) - 1] == '.'):
             tempFact = Fact(tempArr[0], tempArr[1], tempArr[2])
-            facts.append(tempFact)
+            sourceFacts.append(tempFact)
         elif(tempArr[len(tempArr) - 1] == ':-'):
             tempKey = tempArr[0]
             if(tempKey == 'mother' or tempKey == 'father'):
@@ -146,6 +146,12 @@ with open("source.txt") as file:
             elif(tempKey == 'sibling'):
                 treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr, sib=True)
 
-for tree in diction.values():
+"""
+for tree in diction.values(): 
     print_tree(tree)
     print("-------------------")
+for i in facts:
+    print(i)
+    print("----------")
+"""
+print(2)
