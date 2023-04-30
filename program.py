@@ -4,7 +4,6 @@ from fact import Fact
 
 diction = {}
 facts = []
-indx = -1
 
 def print_tree(node, level=0):
     if level == 0:
@@ -30,8 +29,8 @@ def readingFromFile(lineTemp, bs= False):
     else:
         tempArr = re.split(r'[(), ]+', lineTemp)
     return tempArr
-
-def tree_builder(lineTemp, tempArr, bs = False, nephew = False):
+    
+def tree_builder(lineTemp, tempArr, sib = False, bs = False, nephew = False):
     treeRoot = Node(tempArr[0])
     leftChild = Node(tempArr[1], parent=treeRoot)
     rightChild = Node(tempArr[2], parent=treeRoot)
@@ -51,33 +50,11 @@ def tree_builder(lineTemp, tempArr, bs = False, nephew = False):
     nodes.append(tempRoot)
     nodes.append(leftChild)
     nodes.append(rightChild)
-   
-    tempArr = readingFromFile(lineTemp=lineTemp)
-    tempRoot = Node(tempArr[0], parent=leftChild)
-    leftChild.addLeftChild(tempRoot)
-    leftChild = Node(tempArr[1], parent=tempRoot)
-    tempRoot.addLeftChild(leftChild)
-    nodes.append(tempRoot)
-    nodes.append(leftChild)
     
-    if(bs):
-        tempArr = readingFromFile(lineTemp=lineTemp, bs=True)
-        tempRoot = Node(tempArr[1], parent=leftChild)
-        leftChild.addLeftChild(tempRoot)
-        leftChild = Node(tempArr[0], parent=tempRoot)
-        rightChild = Node(tempArr[2], parent=tempRoot)
-        tempRoot.addLeftChild(leftChild)
-        tempRoot.addRightChild(rightChild)    
-        nodes.append(tempRoot)
-        nodes.append(leftChild)
-        nodes.append(rightChild)
-    
-    if(nephew):
-        #rightChild = treeRoot.rightChildElement
+    if(sib):
         tempArr = readingFromFile(lineTemp=lineTemp)    
-        tempRoot = Node(tempArr[0], parent=treeRoot.rightChildElement)
-        #leftChild.addLeftChild(tempRoot)
-        treeRoot.rightChildElement.addRightChild(tempRoot)
+        tempRoot = Node(tempArr[0], parent=leftChild)
+        treeRoot.rightChildElement.addLeftChild(tempRoot)
         leftChild = Node(tempArr[1], parent=tempRoot)
         rightChild = Node(tempArr[2], parent=tempRoot)
         tempRoot.addLeftChild(leftChild)
@@ -85,7 +62,19 @@ def tree_builder(lineTemp, tempArr, bs = False, nephew = False):
         nodes.append(tempRoot)
         nodes.append(leftChild)
         nodes.append(rightChild)
-    
+        
+        tempArr = readingFromFile(lineTemp=lineTemp, bs=True)
+        tempRoot = Node(tempArr[1], parent=leftChild)
+        treeRoot.leftChildElement.leftChildElement.addLeftChild(tempRoot)
+        #leftChild.addLeftChild(tempRoot)
+        leftChild = Node(tempArr[0], parent=tempRoot)
+        rightChild = Node(tempArr[2], parent=tempRoot)
+        tempRoot.addLeftChild(leftChild)
+        tempRoot.addRightChild(rightChild)    
+        nodes.append(tempRoot)
+        nodes.append(leftChild)
+        nodes.append(rightChild)
+    else:
         tempArr = readingFromFile(lineTemp=lineTemp)
         tempRoot = Node(tempArr[0], parent=leftChild)
         leftChild.addLeftChild(tempRoot)
@@ -94,23 +83,53 @@ def tree_builder(lineTemp, tempArr, bs = False, nephew = False):
         nodes.append(tempRoot)
         nodes.append(leftChild)
         
+        if(bs):
+            tempArr = readingFromFile(lineTemp=lineTemp, bs=True)
+            tempRoot = Node(tempArr[1], parent=leftChild)
+            leftChild.addLeftChild(tempRoot)
+            leftChild = Node(tempArr[0], parent=tempRoot)
+            rightChild = Node(tempArr[2], parent=tempRoot)
+            tempRoot.addLeftChild(leftChild)
+            tempRoot.addRightChild(rightChild)    
+            nodes.append(tempRoot)
+            nodes.append(leftChild)
+            nodes.append(rightChild)
+    
+        if(nephew):
+            tempArr = readingFromFile(lineTemp=lineTemp)    
+            tempRoot = Node(tempArr[0], parent=treeRoot.rightChildElement)
+            treeRoot.rightChildElement.addRightChild(tempRoot)
+            leftChild = Node(tempArr[1], parent=tempRoot)
+            rightChild = Node(tempArr[2], parent=tempRoot)
+            tempRoot.addLeftChild(leftChild)
+            tempRoot.addRightChild(rightChild)    
+            nodes.append(tempRoot)
+            nodes.append(leftChild)
+            nodes.append(rightChild)
+        
+            tempArr = readingFromFile(lineTemp=lineTemp)
+            tempRoot = Node(tempArr[0], parent=leftChild)
+            leftChild.addLeftChild(tempRoot)
+            leftChild = Node(tempArr[1], parent=tempRoot)
+            tempRoot.addLeftChild(leftChild)
+            nodes.append(tempRoot)
+            nodes.append(leftChild)
+        
     return treeRoot 
 
 
-with open("text.txt") as file:
+with open("source.txt") as file:
     while True:
-        lineTemp = file.readline()
+        lineTemp = file.readline().replace(" ", "")
         nodes = []
         if(lineTemp == '\n'):
-            if(indx == 0):
-                diction["MotherTree"] = treeRoot
-            elif(indx == 1):
-                diction["FatherTree"] = treeRoot
-            elif(indx == 2):
-                diction["BrotherTree"] = treeRoot
+            tk = treeRoot.name
+            if(tk not in diction):
+                diction[tk] = treeRoot
         if not lineTemp: #End of the File.
-            if(indx == 3):
-                diction["SisterTree"] = treeRoot
+            tk = treeRoot.name
+            if(tk not in diction):
+                diction[tk] = treeRoot
             break
         lineTemp = lineTemp.strip()
         lineTemp = lineTemp.replace(" ", "")
@@ -119,17 +138,14 @@ with open("text.txt") as file:
             tempFact = Fact(tempArr[0], tempArr[1], tempArr[2])
             facts.append(tempFact)
         elif(tempArr[len(tempArr) - 1] == ':-'):
-            indx += 1
-            if(indx == 0):
+            tempKey = tempArr[0]
+            if(tempKey == 'mother' or tempKey == 'father'):
                 treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr)
-                print_tree(treeRoot)
-            elif(indx == 1):
-                treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr)
-                print_tree(treeRoot)
-            elif(indx == 2):
+            elif(tempKey == 'brother' or tempKey == 'sister'):
                 treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr, bs=True)
-                print_tree(treeRoot)
-            elif(indx == 3):
-                treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr, bs=True)
-                print_tree(treeRoot)
-print(2)
+            elif(tempKey == 'sibling'):
+                treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr, sib=True)
+
+for tree in diction.values():
+    print_tree(tree)
+    print("-------------------")
