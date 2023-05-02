@@ -123,6 +123,20 @@ def tree_builder(lineTemp, tempArr, sib = False, bs = False, nephew = False):
     return treeRoot 
 
 
+def get_tree_strings(node):
+    result = []
+    if node is None:
+        return result
+
+    if node.leftChildElement is not None:
+        result += get_tree_strings(node.leftChildElement)
+    if node.rightChildElement is not None:
+        result += get_tree_strings(node.rightChildElement)
+    
+    if len(node.name) > 1:
+        result.append(node.__str__())
+    return result
+
 with open("source.txt") as file:
     while True:
         lineTemp = file.readline().replace(" ", "")
@@ -187,6 +201,8 @@ with open("student1.txt") as file:
             elif(tempKey == 'sibling'):
                 treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr, sib=True)  
 
+s = get_tree_strings(sourceDiction['mother'])
+s1 = get_tree_strings(studentDiction['mother'])
 for temp in sourceDiction:
     tmpKey = temp
     tmpSourceValue = sourceDiction[temp]
