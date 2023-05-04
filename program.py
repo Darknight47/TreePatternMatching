@@ -25,12 +25,12 @@ def print_tree(node, level=0):
     if node.rightChildElement is not None:
         print_tree(node.rightChildElement, level + 1)
 
-def readingFromFile(lineTemp, bs= False):
+def readingFromFile(lineTemp):
     lineTemp = file.readline()
     lineTemp = lineTemp.strip()
     lineTemp = lineTemp.replace(" ", "")
-    if(bs):
-        tempArr = tempArr = re.findall(r'\w+|\\=|\S', lineTemp)
+    if(lineTemp.count('\=') > 0):
+        tempArr = re.split(r'(\\=)', lineTemp)
     else:
         tempArr = re.split(r'[(), ]+', lineTemp)
     return tempArr
@@ -80,6 +80,54 @@ def father_mother_tree_builder(lineTemp, tempArr):
     
     return treeRoot    
 
+def male_subTree(tempArr):
+    tempRoot = Node(tempArr[0])
+    leftChild = Node(tempArr[1], parent=tempRoot)
+    tempRoot.addLeftChild(leftChild)
+    return tempRoot
+def sibling_subTree(tempArr):
+    tempRoot = Node(tempArr[0])
+    leftChild = Node(tempArr[1], parent=tempRoot)
+    rightChild = Node(tempArr[2], parent=tempRoot)
+    tempRoot.addLeftChild(leftChild)
+    tempRoot.addRightChild(rightChild)
+    return tempRoot
+def notEqual_subTree(tempArr):
+    tempRoot = Node(tempArr[1])
+    leftChild = Node(tempArr[0], parent=tempRoot)
+    rightChild = Node(tempArr[2], parent=tempRoot)
+    tempRoot.addLeftChild(leftChild)
+    tempRoot.addRightChild(rightChild)
+    return tempRoot
+
+def brother_sister_tree_builder(lineTemp, tempArr):
+    treeRoot = Node(tempArr[0])
+    leftChildFirst = Node(tempArr[1], parent=treeRoot)
+    rightChildFirst = Node(tempArr[2], parent=treeRoot)
+    treeRoot.addLeftChild(leftChildFirst)
+    treeRoot.addRightChild(rightChildFirst)
+    nodes.append(treeRoot)
+    nodes.append(leftChildFirst)
+    nodes.append(rightChildFirst)
+    
+    for i in range(3):
+        tempArr = readingFromFile(lineTemp=lineTemp)
+        treeRootTemp = None
+        if(tempArr[0] == 'male'):
+            treeRootTemp = male_subTree(tempArr)
+        elif(tempArr[0] == 'sibling'):
+            treeRootTemp = sibling_subTree(tempArr)
+        elif(tempArr[1] == '\='):
+            treeRootTemp = notEqual_subTree(tempArr)
+        
+        if(treeRootTemp.leftChildElement.name == leftChildFirst.name):
+            leftChildFirst.addLeftChild(treeRootTemp)          
+        else:
+            rightChildFirst.addLeftChild(treeRootTemp)
+        leftChildFirst = treeRootTemp.leftChildElement
+        rightChildFirst = treeRootTemp.rightChildElement
+    return treeRoot
+
 def tree_builder(lineTemp, tempArr, sib = False, bs = False, nephew = False):
     treeRoot = Node(tempArr[0])
     leftChildFirst = Node(tempArr[1], parent=treeRoot)
@@ -104,7 +152,6 @@ def tree_builder(lineTemp, tempArr, sib = False, bs = False, nephew = False):
     tempRootSecond.addLeftChild(leftChildSecond)
     nodes.append(tempRootSecond)
     nodes.append(leftChildSecond)
-    
     tempRootSecond.parentElement.addLeftChild(tempRootSecond)
     
     if(sib):
@@ -145,7 +192,6 @@ def tree_builder(lineTemp, tempArr, sib = False, bs = False, nephew = False):
             nodes.append(rightChildThird)
         nodes.append(tempRootThird)
         nodes.append(leftChildThird)
-        
         tempRootThird.parentElement.addLeftChild(tempRootThird)
         if(bs):
             tempArr = readingFromFile(lineTemp=lineTemp, bs=True)
@@ -211,7 +257,7 @@ with open("student1.txt") as file:
             if(tempKey == 'mother' or tempKey == 'father'):
                 treeRoot = father_mother_tree_builder(lineTemp=lineTemp, tempArr=tempArr)
             elif(tempKey == 'brother' or tempKey == 'sister'):
-                treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr, bs=True)
+                treeRoot = brother_sister_tree_builder(lineTemp=lineTemp, tempArr=tempArr)
             elif(tempKey == 'sibling'):
                 treeRoot = tree_builder(lineTemp=lineTemp, tempArr=tempArr, sib=True)  
 
@@ -228,7 +274,7 @@ def getTheMeaning(node):
         result.append(node.__str__())
     return result
 
-s = getTheMeaning(studentDiction['mother'])
+s = getTheMeaning(studentDiction['brother'])
 s3 = getTheMeaning(studentDiction['father'])
 
 
