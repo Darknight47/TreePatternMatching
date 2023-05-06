@@ -24,10 +24,10 @@ class Node:
     def __str__(self):
         if len(self.name) > 1:
             if self.leftChildElement is not None and self.rightChildElement is None:
-                return f"{self.leftChildElement.name} is a {self.name}."
+                return f"{self.leftChildElement.name} is a {self.name}"
             elif self.leftChildElement is not None and self.rightChildElement is not None:
                 if self.leftChildElement.parentElement.name == '\=':
-                    return f"{self.leftChildElement.name} is not the same ({self.name}) as {self.rightChildElement.name}."
-                return f"{self.leftChildElement.name} is the {self.name} of the {self.rightChildElement.name}."
+                    return f"{self.leftChildElement.name} is not the same ({self.name}) as {self.rightChildElement.name}"
+                return f"{self.leftChildElement.name} is the {self.name} of the {self.rightChildElement.name}"
             elif self.leftChildElement is None and self.rightChildElement is not None:
-                return f"{self.rightChildElement.name} is {self.name}."
+                return f"{self.rightChildElement.name} is {self.name}"
